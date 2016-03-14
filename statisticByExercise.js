@@ -183,6 +183,20 @@ function showTemplate(){
 function ShowUsers(qNumber){
 
     showTemplateUser(qNumber);
+    //分页显示
+    theTable = document.getElementById("table4");
+    totalPage = document.getElementById("spanTotalPage");
+    pageNum = document.getElementById("spanPageNum");
+
+    spanPre = document.getElementById("spanPre");
+    spanNext = document.getElementById("spanNext");
+    spanFirst = document.getElementById("spanFirst");
+    spanLast = document.getElementById("spanLast");
+
+    numberRowsInTable = theTable.rows.length;
+    pageSize = 40;
+    page = 1;
+    hide();
 
 
 }
