@@ -151,30 +151,31 @@ function showTemplate(){
 
 
              data = eval("(" + data_i + ")") // 把string转化为json
-            alert(data.total_submitted_count);
+
             var source   = $("#table-template").html();
             var template = Handlebars.compile(source);
             $("#tableDiv").html(template(data));
+            altRows('alternatecolor');
+            //分页显示
+            theTable = document.getElementById("table3");
+            totalPage = document.getElementById("spanTotalPage");
+            pageNum = document.getElementById("spanPageNum");
+
+            spanPre = document.getElementById("spanPre");
+            spanNext = document.getElementById("spanNext");
+            spanFirst = document.getElementById("spanFirst");
+            spanLast = document.getElementById("spanLast");
+
+            numberRowsInTable = theTable.rows.length;
+            pageSize = 40;
+            page = 1;
+            hide();
 
 
         }
     });
 
-    altRows('alternatecolor');
-    //分页显示
-    theTable = document.getElementById("table3");
-    totalPage = document.getElementById("spanTotalPage");
-    pageNum = document.getElementById("spanPageNum");
 
-    spanPre = document.getElementById("spanPre");
-    spanNext = document.getElementById("spanNext");
-    spanFirst = document.getElementById("spanFirst");
-    spanLast = document.getElementById("spanLast");
-
-    numberRowsInTable = theTable.rows.length;
-    pageSize = 40;
-    page = 1;
-    hide();
 
 }
 
@@ -182,21 +183,7 @@ function showTemplate(){
 function ShowUsers(qNumber){
 
     showTemplateUser(qNumber);
-    //分页显示
-    theTable = document.getElementById("table4");
-    totalPage = document.getElementById("spanTotalPage");
-    pageNum = document.getElementById("spanPageNum");
 
-    spanPre = document.getElementById("spanPre");
-    spanNext = document.getElementById("spanNext");
-    spanFirst = document.getElementById("spanFirst");
-    spanLast = document.getElementById("spanLast");
-
-    numberRowsInTable = theTable.rows.length;
-    pageSize = 40;
-    page = 1;
-
-    hide();
 
 }
 
