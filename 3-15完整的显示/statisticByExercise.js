@@ -155,7 +155,7 @@ function showTemplate(){
     spanLast = document.getElementById("spanLast");
 
     numberRowsInTable = theTable.rows.length;
-    pageSize = 80;
+    pageSize = 40;
     page = 1;
     hide();
 
@@ -177,7 +177,7 @@ function ShowUsers(qNumber){
     spanLast = document.getElementById("spanLast");
 
     numberRowsInTable = theTable.rows.length;
-    pageSize = 80;
+    pageSize = 40;
     page = 1;
 
     hide();
@@ -228,12 +228,11 @@ qListByName["qNumberList"]=qNumberList
     spanFirst = document.getElementById("spanFirst");
     spanLast = document.getElementById("spanLast");
 
-
     numberRowsInTable = theTable.rows.length;
-    pageSize = 80;
+    pageSize = 40;
     page = 1;
-
     hide();
+
 
 
 
