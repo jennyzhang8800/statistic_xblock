@@ -19,7 +19,8 @@
    
    具体的执行流程是：
       :sparkles: [点击“statistic”按钮]:
-           *首先调用脚本“pullFromGitlab.sh”,把gitlab上"answer"仓库clone一份到服务器的/var/www/zyni/目录下
-           *然后调用脚本“statisticNewAdded.py”以增量的方式统计练习题完成情况。
+      
+           +首先调用脚本“pullFromGitlab.sh”,把gitlab上"answer"仓库clone一份到服务器的/var/www/zyni/目录下
+           +然后调用脚本“statisticNewAdded.py”以增量的方式统计练习题完成情况。
       
       
