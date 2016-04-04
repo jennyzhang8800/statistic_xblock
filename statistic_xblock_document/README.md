@@ -1,5 +1,5 @@
 #Script
-  包含三个脚本，是xblock调用的脚本；功能是实现学生作业提交的增量统计
+  包含五个脚本，是xblock调用的脚本；功能是实现学生作业提交的增量统计
   1. statisticNewAdded.py
 
       实现的功能是：实现学生作业提交的增量统计
@@ -8,10 +8,18 @@
   2. statistic_new_commit.sh
   
      实现的功能是：提取出指定时间之后的commit信息，只提取commit的时间和commit message这两项信息。
-     
-  3. statistic.py
+   
+  3. pullFromGitlab.sh
   
-     实现的功能是：对answer仓库进行全面的统计。
+     实现的功能是：从gitlab把"answer"仓库pull到服务器的'/var/www/zyni'目录下，供统计数据使用
+
+  4. pushToGitHubStatistic.sh
+  
+     实现的功能是：把统计的结果"statisticByExercise.json" push到github,供表格显示使用
+
+  5. statistic.py
+  
+     实现的功能是：对answer仓库进行全面的统计。此脚本备用于手工统计
   
 #genexericse
 
