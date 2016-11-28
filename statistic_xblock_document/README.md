@@ -16,6 +16,12 @@
   4. pushToGitHubStatistic.sh
   
      实现的功能是：把统计的结果"statisticByExercise.json" push到github,供表格显示使用
+     
+  5. statisticByEmail.py
+   
+     实现的功能是:对所有己提交的题进行全面统计，记录邮箱，题号，提交时间，批改结果。 
+     该脚本每天23:30定时执行，脚本位于/var/www/zyni/script/  脚本运行结果位于：/edx/var/edxapp/staticfiles/statistic/
+     脚本在运行时的日志：/var/www/zyni/log/statisticByEmail.log  
 
   5. statistic.py
   
@@ -32,3 +38,6 @@
            +然后调用脚本“statisticNewAdded.py”以增量的方式统计练习题完成情况。
       
       
+#statistic
+
+存放的是该xblock 的渲染脚本等静态文件。把该文件夹放到/edx/var/edxapp/staticfiles/目录下
