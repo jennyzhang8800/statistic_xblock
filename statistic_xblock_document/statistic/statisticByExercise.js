@@ -7,22 +7,13 @@
  */
 
 
-
-
-//初始时显示课程的所有练习题完成情况
-window.onload=function(){
-//页面加载时feed部分显示的是my_feed的内容
-
-
+$(document).ready(function () {
+    //页面加载时显示练习题完成情况列表
     showTemplate();
-
-
-}
-
+});
 
 //下一页
 function next() {
-
     hideTable();
 
     currentRow = pageSize * page;
@@ -39,7 +30,6 @@ function next() {
     firstLink();
 }
 
-
 //上一页
 function pre() {
     hideTable();
@@ -50,7 +40,6 @@ function pre() {
     for (var i = maxRow; i < currentRow; i++) {
         theTable.rows[i].style.display = '';
     }
-
     if (maxRow == 0) { preText(); firstText(); }
     showPage();
     nextLink();
@@ -105,23 +94,18 @@ function pageCount() {
     return parseInt(numberRowsInTable / pageSize) + count;
 }
 
-
 //显示链接
 function preLink() { spanPre.innerHTML = "<a href='javascript:pre();'>上一页</a>"; }
 function preText() { spanPre.innerHTML = "上一页"; }
 
-
 function nextLink() { spanNext.innerHTML = "<a href='javascript:next();'>下一页</a>"; }
 function nextText() { spanNext.innerHTML = "下一页"; }
-
 
 function firstLink() { spanFirst.innerHTML = "<a href='javascript:first();'>第一页</a>"; }
 function firstText() { spanFirst.innerHTML = "第一页"; }
 
-
 function lastLink() { spanLast.innerHTML = "<a href='javascript:last();'>最后一页</a>"; }
 function lastText() { spanLast.innerHTML = "最后一页"; }
-
 
 //隐藏表格
 function hide() {
@@ -134,33 +118,128 @@ function hide() {
     lastLink();
 }
 
-//显示课程的所有练习题完成情况
-function showTemplate(){
+/***
+ * 点击表头，出现"▲"，"▼"图标，并进行表格排序
+ * @param dataSource:表的数据源
+ * @param colId: 列Id
+ * @param tableId :表的id
+ * @param iCol:第几列
+ */
+
+function sortAble(dataSource,colId,tableId, iCol) {
+
+    var ascChar = "▲";
+    var descChar = "▼";
+    var table = document.getElementById(tableId);
+    //排序标题加背景色,并把所有单元格的“升序、降序” 小图标都先清除掉
+
+    for (var t = 0; t < table.tHead.rows[0].cells.length; t++) {
+        var th = $(table.tHead.rows[0].cells[t]);
+        var thText = th.html().replace(ascChar, "").replace(descChar, "");
+        if (t == iCol) {
+            th.css("background-color", "#ccc");
+        }
+        else {
+            th.css("background-color", "#fff");
+            th.html(thText);
+        }
+
+    }
+    //给排序标题加“升序、降序” 小图标显示,并调用排序函数进行排序
+    var th = $(table.tHead.rows[0].cells[iCol]);
+    if (th.html().indexOf(ascChar) == -1 && th.html().indexOf(descChar) == -1) {
+        th.html(th.html() + ascChar);
+        //按colId列进行升序排序
+        sortTable(dataSource,colId,tableId, iCol,"asc");
+
+    }
+    else if (th.html().indexOf(ascChar) != -1) {
+        th.html(th.html().replace(ascChar, descChar));
+        //按colId列进行降序排序
+        sortTable(dataSource,colId,tableId, iCol,"desc");
+
+
+    }
+    else if (th.html().indexOf(descChar) != -1) {
+        th.html(th.html().replace(descChar, ascChar));
+        //按colId列进行升序排序
+        sortTable(dataSource,colId,tableId, iCol,"asc");
+
+
+    }
+
+}
+
+
+/***
+ * 对表格进行排序
+ * @param dataSource:表的数据源
+ * @param colId：列Id（按该列进行排序）
+ * @param tableId：表Id
+ * @param iCol:第几列
+ * @param way:排序方式（升序，降序）
+ */
+function sortTable(dataSource,colId,tableId, iCol,way){
 
     //注册索引+1的helper
     var handleHelper = Handlebars.registerHelper("addOne",function(index){
-      //返回+1之后的结果
-    return index+1;
+        //返回+1之后的结果
+        return index+1;
     });
-    url_github="https://raw.githubusercontent.com/jennyzhang8800/statistic_xblock/master/statisticByExercise.json";
-    $.ajax({
-        type : "get",
-        cache : false,
-        url : url_github , // 请求地址
-        success : function(data_i) { // ajax执行成功后执行的方法
+    //对json进行降序排序函数
+    var desc = function(x,y)
+    {
+        return (x[colId] < y[colId]) ? 1 : -1
+    }
+   //对json进行升序排序函数
+    var asc = function(x,y)
+    {
+        return (x[colId] > y[colId]) ? 1 : -1
+    }
 
+    //练习题完成情况统计表格
+    if(tableId=="tableFirst"){
+    //请求数据
 
-             data = eval("(" + data_i + ")") // 把string转化为json
-
+            if(way=="desc"){data.children.sort(desc);}
+            else if(way="asc"){data.children.sort(asc);}
+          //  alert(JSON.stringify(data));
+            //加载数据入表格模板中
             var source   = $("#table-template").html();
             var template = Handlebars.compile(source);
             $("#tableDiv").html(template(data));
-            altRows('alternatecolor');
+            //重新更新排序图标（因为表格刷新后图标不会保留）
+            var ascChar = "▲";
+            var descChar = "▼";
+            var table = document.getElementById(tableId);
+            //排序标题加背景色,并把所有单元格的“升序、降序” 小图标都先清除掉
+
+            for (var t = 0; t < table.tHead.rows[0].cells.length; t++) {
+                var th = $(table.tHead.rows[0].cells[t]);
+                var thText = th.html().replace(ascChar, "").replace(descChar, "");
+                if (t == iCol) {
+                    th.css("background-color", "#ccc");
+                }
+                else {
+                    th.css("background-color", "#fff");
+                    th.html(thText);
+                }
+
+            }
+            //给排序标题加“升序、降序” 小图标显示,并调用排序函数进行排序
+            var th = $(table.tHead.rows[0].cells[iCol]);
+            if (way=="asc") {
+                th.html(th.html() + ascChar);
+            }
+            else if(way=="desc"){
+                th.html(th.html() + descChar);
+            }
+
             //分页显示
+            altRows('tableFirst');
             theTable = document.getElementById("table3");
             totalPage = document.getElementById("spanTotalPage");
             pageNum = document.getElementById("spanPageNum");
-
             spanPre = document.getElementById("spanPre");
             spanNext = document.getElementById("spanNext");
             spanFirst = document.getElementById("spanFirst");
@@ -172,12 +251,183 @@ function showTemplate(){
             hide();
 
 
+
+
+    }
+
+    //某一道题的己提交用户表
+    else if(tableId=="alternatecolor-user"){
+
+                //对Json数据进行排序
+                if(way=="desc"){user_list.children.sort(desc);}
+                else if(way="asc"){user_list.children.sort(asc);}
+                //alert(JSON.stringify(user_list));
+
+                //加载数据入表格模板中
+               var source   = $("#user-table-template").html();
+                var template = Handlebars.compile(source);
+               $("#tableDiv").html(template(user_list));
+               CurrentqNumber = document.getElementById("qNumber");
+               CurrentqNumber.innerHTML = "(题号:"+user_list.q_number+")";
+               var userCount= document.getElementById("userCount");
+               userCount.innerHTML="&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp本题共有<span style='color:red'>"+user_list["children"].length+"</span>个用户提交"
+               altRows('alternatecolor-user');
+
+                //重新更新排序图标（因为表格刷新后图标不会保留）
+                var ascChar = "▲";
+                var descChar = "▼";
+                var table = document.getElementById(tableId);
+                //排序标题加背景色,并把所有单元格的“升序、降序” 小图标都先清除掉
+
+                for (var t = 0; t < table.tHead.rows[0].cells.length; t++) {
+                    var th = $(table.tHead.rows[0].cells[t]);
+                    var thText = th.html().replace(ascChar, "").replace(descChar, "");
+                    if (t == iCol) {
+                        th.css("background-color", "#ccc");
+                    }
+                    else {
+                        th.css("background-color", "#fff");
+                        th.html(thText);
+                    }
+
+                }
+                //给排序标题加“升序、降序” 小图标显示,并调用排序函数进行排序
+                var th = $(table.tHead.rows[0].cells[iCol]);
+                if (way=="asc") {
+                    th.html(th.html() + ascChar);
+                }
+                else if(way=="desc"){
+                    th.html(th.html() + descChar);
+                }
+
+                //分页显示
+                altRows('tableFirst');
+                theTable = document.getElementById("table3");
+                totalPage = document.getElementById("spanTotalPage");
+                pageNum = document.getElementById("spanPageNum");
+                spanPre = document.getElementById("spanPre");
+                spanNext = document.getElementById("spanNext");
+                spanFirst = document.getElementById("spanFirst");
+                spanLast = document.getElementById("spanLast");
+
+                numberRowsInTable = theTable.rows.length;
+                pageSize = 40;
+                page = 1;
+                hide();
+
+    }
+
+    //某一用户的完成情况表格
+    else if(tableId=="alternatecolor-user-qnumber"){
+
+        //对Json数据进行排序
+        if(way=="desc"){qListByName.qNumberList.sort(desc);}
+        else if(way="asc"){qListByName.qNumberList.sort(asc);}
+
+        //注册索引+1的helper
+        var handleHelper = Handlebars.registerHelper("addOne",function(index){
+            //返回+1之后的结果
+            return index+1;
+        });
+        var source   = $("#user-qnumber-table-template").html();
+        var template = Handlebars.compile(source);
+        $("#tableDiv").html(template(qListByName));
+        CurrentqNumber = document.getElementById("userName");
+        CurrentqNumber.innerHTML = "(用户:"+qListByName.email+")";
+        var exerciseCount= document.getElementById("exerciseCount");
+        exerciseCount.innerHTML="&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp该用户提交了<span style='color:red'>"+qListByName.qNumberList.length+"</span>道题";
+
+        //重新更新排序图标（因为表格刷新后图标不会保留）
+        var ascChar = "▲";
+        var descChar = "▼";
+        var table = document.getElementById(tableId);
+        //排序标题加背景色,并把所有单元格的“升序、降序” 小图标都先清除掉
+
+        for (var t = 0; t < table.tHead.rows[0].cells.length; t++) {
+            var th = $(table.tHead.rows[0].cells[t]);
+            var thText = th.html().replace(ascChar, "").replace(descChar, "");
+            if (t == iCol) {
+                th.css("background-color", "#ccc");
+            }
+            else {
+                th.css("background-color", "#fff");
+                th.html(thText);
+            }
+
         }
-    });
+        //给排序标题加“升序、降序” 小图标显示,并调用排序函数进行排序
+        var th = $(table.tHead.rows[0].cells[iCol]);
+        if (way=="asc") {
+            th.html(th.html() + ascChar);
+        }
+        else if(way=="desc"){
+            th.html(th.html() + descChar);
+        }
+        altRows('alternatecolor-user-qnumber');
+        theTable = document.getElementById("table5");
+        totalPage = document.getElementById("spanTotalPage");
+        pageNum = document.getElementById("spanPageNum");
+        spanPre = document.getElementById("spanPre");
+        spanNext = document.getElementById("spanNext");
+        spanFirst = document.getElementById("spanFirst");
+        spanLast = document.getElementById("spanLast");
 
-
-
+        numberRowsInTable = theTable.rows.length;
+        pageSize = 40;
+        page = 1;
+        hide();
+    }
 }
+
+
+
+
+ //显示课程的所有练习题完成情况
+ function showTemplate(){
+
+ //注册索引+1的helper
+ var handleHelper = Handlebars.registerHelper("addOne",function(index){
+ //返回+1之后的结果
+ return index+1;
+ });
+ url_github="https://raw.githubusercontent.com/jennyzhang8800/statistic_xblock/master/statisticByQnumber_result.json";
+ $.ajax({
+ type : "get",
+ cache : false,
+ url :url_github , // 请求地址
+ success : function(data_i) { // ajax执行成功后执行的方法
+
+
+ data = eval("(" + data_i + ")") // 把string转化为json
+
+ var source   = $("#table-template").html();
+ var template = Handlebars.compile(source);
+ $("#tableDiv").html(template(data));
+ altRows('tableFirst');
+ //分页显示
+ theTable = document.getElementById("table3");
+ totalPage = document.getElementById("spanTotalPage");
+ pageNum = document.getElementById("spanPageNum");
+
+ spanPre = document.getElementById("spanPre");
+ spanNext = document.getElementById("spanNext");
+ spanFirst = document.getElementById("spanFirst");
+ spanLast = document.getElementById("spanLast");
+
+ numberRowsInTable = theTable.rows.length;
+ pageSize = 40;
+ page = 1;
+ hide();
+
+
+ }
+ });
+
+
+
+ }
+
+
 
 //根据题号，显示提交的该题的所有用户
 function ShowUsers(qNumber){
@@ -201,51 +451,7 @@ function ShowUsers(qNumber){
 
 }
 
-//根据用户名，显示该用户所提交的题
-function ShowQNumberList(userName){
-$.ajax({
-        type:"get",
-        url:"./statisticByEmail_result.json",
-        success:function(data_email){
 
-   
-var qListByName={};
-var qNumberList=[];
-for(var i=0; i<data_email.length;i++){
-if(data_email[i].email==userName){
-qNumberList.push(data_email[i]);
-}}
-qListByName["qNumberList"]=qNumberList;
-
-    //注册索引+1的helper
-    var handleHelper = Handlebars.registerHelper("addOne",function(index){
-        //返回+1之后的结果
-        return index+1;
-    });
-    var source   = $("#user-qnumber-table-template").html();
-    var template = Handlebars.compile(source);
-    $("#tableDiv").html(template(qListByName));
-    CurrentqNumber = document.getElementById("userName");
-    CurrentqNumber.innerHTML = "(用户:"+userName+")";
-    var exerciseCount= document.getElementById("exerciseCount");
-    exerciseCount.innerHTML="&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp该用户提交了<span style='color:red'>"+qNumberList.length+"</span>道题";
-   
-    altRows('alternatecolor-user-qnumber');
-    theTable = document.getElementById("table5");
-    totalPage = document.getElementById("spanTotalPage");
-    pageNum = document.getElementById("spanPageNum");
-    spanPre = document.getElementById("spanPre");
-    spanNext = document.getElementById("spanNext");
-    spanFirst = document.getElementById("spanFirst");
-    spanLast = document.getElementById("spanLast");
-
-    numberRowsInTable = theTable.rows.length;
-    pageSize = 40;
-    page = 1;
-    hide();
-}
-})
-}
 
 //根据题号，显示提交了该题的所有用户
 function showTemplateUser(qNumber){
@@ -255,28 +461,76 @@ function showTemplateUser(qNumber){
         return index+1;
     });
 
-   
+
     var source   = $("#user-table-template").html();
     var template = Handlebars.compile(source);
-    
 
-    var user_list={};
-   
-    user_list["user_name_list"]=[]
-    
+
+    user_list={};
+    user_list["q_number"]=qNumber;
+    user_list["children"]=[]
+
     for(var i=0; i<data.children.length;i++){
-       if(data.children[i].q_number==qNumber){user_list["user_name_list"]=data.children[i].user_name_list;break;}
-       
+        if(data.children[i].q_number==qNumber){user_list["children"]=data.children[i].email_list;break;}
+
     }
-    
-   
+
     $("#tableDiv").html(template(user_list));
     CurrentqNumber = document.getElementById("qNumber");
     CurrentqNumber.innerHTML = "(题号:"+qNumber+")";
     var userCount= document.getElementById("userCount");
-    userCount.innerHTML="&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp本题共有<span style='color:red'>"+user_list["user_name_list"].length+"</span>个用户提交"
+    userCount.innerHTML="&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp本题共有<span style='color:red'>"+user_list["children"].length+"</span>个用户提交"
     altRows('alternatecolor-user');
 
+}
+
+
+//根据用户名，显示该用户所提交的题
+function ShowQNumberList(userName){
+     $.ajax({
+        type:"get",
+        url:"https://raw.githubusercontent.com/jennyzhang8800/statistic_xblock/master/statisticByEmail_result.json",
+        success:function(data_e){
+            data_email = eval("(" + data_e + ")") // 把string转化为json
+
+            qListByName={};
+            var qNumberList=[];
+            qListByName["email"]=userName;
+            for(var i=0; i<data_email.length;i++){
+
+                if(data_email[i]["email"]==userName){
+                    qNumberList.push(data_email[i]);
+                }}
+            qListByName["qNumberList"]=qNumberList;
+            //alert(JSON.stringify(qListByName));
+            //注册索引+1的helper
+            var handleHelper = Handlebars.registerHelper("addOne",function(index){
+                //返回+1之后的结果
+                return index+1;
+            });
+            var source   = $("#user-qnumber-table-template").html();
+            var template = Handlebars.compile(source);
+            $("#tableDiv").html(template(qListByName));
+            CurrentqNumber = document.getElementById("userName");
+            CurrentqNumber.innerHTML = "(用户:"+userName+")";
+            var exerciseCount= document.getElementById("exerciseCount");
+            exerciseCount.innerHTML="&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp该用户提交了<span style='color:red'>"+qNumberList.length+"</span>道题";
+
+            altRows('alternatecolor-user-qnumber');
+            theTable = document.getElementById("table5");
+            totalPage = document.getElementById("spanTotalPage");
+            pageNum = document.getElementById("spanPageNum");
+            spanPre = document.getElementById("spanPre");
+            spanNext = document.getElementById("spanNext");
+            spanFirst = document.getElementById("spanFirst");
+            spanLast = document.getElementById("spanLast");
+
+            numberRowsInTable = theTable.rows.length;
+            pageSize = 40;
+            page = 1;
+            hide();
+        }
+    })
 }
 
 //表格样式，自动隔行换色
