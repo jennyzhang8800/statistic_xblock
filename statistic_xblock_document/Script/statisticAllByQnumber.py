@@ -53,7 +53,7 @@ def saveFile(file_path,file_name,data):
     output.write(data)
     output.close()
 if __name__ == '__main__':
-    path=r"E:/statisticByEmail_result.json"
+    path=r"/var/www/zyni/test/statisticByEmail_result.json"
     data=statisticAllByQnumber(path)
-    saveFile(r"E:","statisticByQnumber_result.json",data)
+    saveFile(r"/edx/var/edxapp/staticfiles/statistic/","statisticByQnumber_result.json",data)
 
