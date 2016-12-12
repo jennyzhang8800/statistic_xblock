@@ -394,11 +394,11 @@ function sortTable(dataSource,colId,tableId, iCol,way){
  $.ajax({
  type : "get",
  cache : false,
- url :url_github , // 请求地址
+ url :"./statisticByQnumber_result.json" , // 请求地址
  success : function(data_i) { // ajax执行成功后执行的方法
 
-
- data = eval("(" + data_i + ")") // 把string转化为json
+    data=data_i;
+// data = eval("(" + data_i + ")") // 把string转化为json
 
  var source   = $("#table-template").html();
  var template = Handlebars.compile(source);
@@ -489,10 +489,10 @@ function showTemplateUser(qNumber){
 function ShowQNumberList(userName){
      $.ajax({
         type:"get",
-        url:"https://raw.githubusercontent.com/jennyzhang8800/statistic_xblock/master/statisticByEmail_result.json",
+        url:"./statisticByEmail_result.json",
         success:function(data_e){
-            data_email = eval("(" + data_e + ")") // 把string转化为json
-
+           // data_email = eval("(" + data_e + ")") // 把string转化为json
+            data_email=data_e;
             qListByName={};
             var qNumberList=[];
             qListByName["email"]=userName;

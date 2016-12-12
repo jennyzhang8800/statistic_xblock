@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="statisticByExercise.css"/>
+    <script src="statisticByExercise.js"></script>
+    <script type="text/javascript" src="jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="handlebars-v3.0.3.js"></script>
+    <title></title>
+</head>
+<body>
+<div id="tableDiv">
+
+</div>
+
+<script id="table-template" type="text/x-handlebars-template">
+    <table class="altrowstable" id="alternatecolor" align="center">
+        <caption style="font-size:18px;font-weight:bold" >练习题完成情况</caption>
+        <thead >
+
+            <th  style = "background-color:#009FCC">序号</th>
+            <th  style = "background-color:#009FCC ">题号</th>
+            <th  style = "background-color:#009FCC ">己题交人数</th>
+            <th  style = "background-color:#009FCC ">题交用户</th>
+
+        </thead>
+        <tbody>
+        {{#each children}}
+        <tr onmouseout="this.style.backgroundColor=''" onmouseover="this.style.backgroundColor='#c7e5ff'">
+            <td>{{addOne @index}}</td><td>{{q_number}}</td><td>{{submitted_count}}</td><td><a href = "javascript:Foo()">显示用户列表</a></td>
+        </tr>
+        {{/each}}
+        </tbody>
+    </table>
+
+</script>
+
+</body>
+</html>
